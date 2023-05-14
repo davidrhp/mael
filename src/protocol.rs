@@ -1,4 +1,4 @@
-use std::io::{BufRead, StdoutLock, Write, StdinLock, Lines};
+use std::io::{BufRead, Lines, StdinLock, StdoutLock, Write};
 
 use anyhow::{bail, Context};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -77,10 +77,10 @@ where
     let stdin = std::io::stdin().lock();
     let mut stdin = stdin.lines();
     let mut stdout = std::io::stdout().lock();
-    
+
     let init_msg: Message<InitPayload> = read_init_message(&mut stdin)?;
     let init = extract_init(&init_msg)?;
-    
+
     send_init_ok(init_msg, &mut stdout)?;
 
     let mut node: N = Node::from_init(init);
@@ -99,7 +99,7 @@ fn read_init_message(input: &mut Lines<StdinLock>) -> anyhow::Result<Message<Ini
             .expect("no init message received")
             .context("failed to read init message from STDIN")?,
     )?;
-    
+
     Ok(init_msg)
 }
 
@@ -107,7 +107,7 @@ fn extract_init(msg: &Message<InitPayload>) -> anyhow::Result<Init> {
     let InitPayload::Init(init) = &msg.body.payload else {
         bail!("first message must be init")
     };
-    
+
     Ok(init.clone())
 }
 
