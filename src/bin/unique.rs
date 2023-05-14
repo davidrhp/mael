@@ -29,13 +29,19 @@ impl Node<UniqueIdPayload> for UniqueIdNode {
         
         match reply.body.payload {
             UniqueIdPayload::Generate  => {
-                reply.body.payload = UniqueIdPayload::GenerateOk { id: format!("{}:{}", self.id, self.counter) };
+                reply.body.payload = UniqueIdPayload::GenerateOk { id: self.generate_id() };
                 reply.send_message(output)?;
             }
             UniqueIdPayload::GenerateOk { .. } => bail!("unexpected message GenerateOk"),
         }
         
         Ok(())
+    }
+}
+
+impl UniqueIdNode {
+    fn generate_id(&self) -> String {
+        format!("{}:{}", self.id, self.counter)
     }
 }
 
